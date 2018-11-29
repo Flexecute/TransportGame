@@ -1,5 +1,2 @@
-/Transport/.vs/Transport/v15/.suo
-/Transport/.vs/Transport/v15/Server/sqlite3/db.lock
-/Transport/.vs/Transport/v15/Server/sqlite3/storage.ide
-/Transport/.vs/Transport/v15/Server/sqlite3/storage.ide-shm
-/Transport/.vs/Transport/v15/Server/sqlite3/storage.ide-wal
+/Transport/.vs/*
+/Transport/Transport/bin/*
