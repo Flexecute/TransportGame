@@ -21,12 +21,14 @@ namespace Transport
         private ResolutionIndependentRenderer resolutionIndependence;
         private Camera2D camera;
         private Vector2 screenMousePos;
-        private Vector2 mouseDrawPos;
-        private Texture2D bkg;
-        private Vector2 bkgPos;
-        private float rotationDiff = 0.02f;
-        private float zoomDiff = 0.02f;
+        //private Texture2D bkg;
+        //private Vector2 bkgPos;
+        private float camRotationDiff = 0.02f;
+        private float camZoomDiff = 0.04f;
+        private float camMoveDiff = 10f;
+        private float camMouseMoveDiff = 0.5f;
         private SpriteBatch spriteBatch;
+
 
         Dictionary<Type, Texture2D> tileTextures = new Dictionary<Type, Texture2D>();
 
@@ -70,14 +72,12 @@ namespace Transport
         {
             // Setup camera / resolution
             camera = new Camera2D(resolutionIndependence);
+            InitializeResolutionIndependence(graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height);
             camera.Zoom = 1f;
             camera.Position = new Vector2(resolutionIndependence.VirtualWidth / 2, resolutionIndependence.VirtualHeight / 2);
 
-            InitializeResolutionIndependence(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
-            mouseDrawPos.X = 700;
-            mouseDrawPos.Y = 40f;
             //bkg = Content.Load<Texture2D>(@"background");
-            bkgPos = new Vector2();
+            //bkgPos = new Vector2();
 
             // Load textures
             Texture2D baseTile = Content.Load<Texture2D>("sandtile");
@@ -121,24 +121,67 @@ namespace Transport
             if (inputHelper.ExitRequested)
                 Exit();
 
-            if (inputHelper.IsCurPress(Keys.Add))
+
+            // Left control modifier?
+            if (inputHelper.IsCurPress(Keys.LeftControl))
             {
-                if (inputHelper.IsCurPress(Keys.LeftShift))
-                    camera.Rotation += rotationDiff;
-                else
-                    camera.Zoom += zoomDiff;
-            }
-            else if (inputHelper.IsCurPress(Keys.Subtract))
+                if (inputHelper.IsCurPress(Keys.Left))
+                {
+                    camera.Rotation += camRotationDiff;
+                }
+                if (inputHelper.IsCurPress(Keys.Right))
+                {
+                    camera.Rotation -= camRotationDiff;
+                }
+                if (inputHelper.IsCurPress(Keys.Up))
+                {
+                    camera.Zoom += camZoomDiff;
+                }
+                if (inputHelper.IsCurPress(Keys.Down))
+                {
+                    camera.Zoom -= camZoomDiff;
+                }
+            } else
             {
-                if (inputHelper.IsCurPress(Keys.LeftShift))
-                    camera.Rotation -= rotationDiff;
-                else
-                    camera.Zoom -= zoomDiff;
-            }
-            else if (inputHelper.IsNewPress(Keys.R))
-            {
-                camera.Zoom = 1;
-                camera.Rotation = 0;
+                if (inputHelper.IsCurPress(Keys.Left))
+                {
+                    camera.Move(new Vector2(-camMoveDiff, 0));
+                }
+                if (inputHelper.IsCurPress(Keys.Right))
+                {
+                    camera.Move(new Vector2(camMoveDiff, 0));
+                }
+                if (inputHelper.IsCurPress(Keys.Up))
+                {
+                    camera.Move(new Vector2(0, -camMoveDiff));
+                }
+                if (inputHelper.IsCurPress(Keys.Down))
+                { 
+                    camera.Move(new Vector2(0, camMoveDiff));
+                }
+
+                // Check mouse input
+                if (inputHelper.MouseScrollWheelVelocity > 0)
+                {
+                    camera.Zoom += camZoomDiff;
+                }
+                else if (inputHelper.MouseScrollWheelVelocity < 0)
+                {
+                    camera.Zoom -= camZoomDiff;
+                }
+                else if (inputHelper.LeftHeld())
+                {
+                    camera.Move(-inputHelper.MouseVelocity * camMouseMoveDiff);
+                }
+                else if (inputHelper.RightClicked())
+                {
+                    //MessageBox.Show("Mouse", "Mouse Position", MessageBoxButtons.OK);
+                    
+                } else if (inputHelper.IsNewPress(Keys.R))
+                {
+                    camera.Zoom = 1;
+                    camera.Rotation = 0;
+                }
             }
 
             base.Update(gameTime);
@@ -167,8 +210,8 @@ namespace Transport
 
         private void InitializeResolutionIndependence(int realScreenWidth, int realScreenHeight)
         {
-            resolutionIndependence.VirtualWidth = 1366;
-            resolutionIndependence.VirtualHeight = 768;
+            resolutionIndependence.VirtualHeight = 1000;
+            resolutionIndependence.VirtualWidth = 1000;
             resolutionIndependence.ScreenWidth = realScreenWidth;
             resolutionIndependence.ScreenHeight = realScreenHeight;
             resolutionIndependence.Initialize();

@@ -29,6 +29,10 @@ namespace Roboblob.XNA.WinRT.Input
         private bool refreshData = false;
         public Vector2 CurrentMousePosition = new Vector2();
         private bool _leftIsHeld;
+        private bool _rightIsHeld;
+        private bool _leftClicked;
+        private bool _rightClicked;
+
 
         /// <summary>
         /// Fetches the latest input states.
@@ -47,6 +51,9 @@ namespace Roboblob.XNA.WinRT.Input
                 _currentGamepadState = GamePad.GetState(_index);
             }
 #if (!XBOX)
+            _leftClicked = false;
+            _rightClicked = false;
+
             if (_lastKeyboardState == null && _currentKeyboardState == null)
             {
                 _lastKeyboardState = _currentKeyboardState = Keyboard.GetState();
@@ -66,10 +73,28 @@ namespace Roboblob.XNA.WinRT.Input
                 if (_currentMouseState.LeftButton == ButtonState.Released)
                 {
                     _leftIsHeld = false;
+                    _leftClicked = true;
+                }
+            }
+            if (_rightIsHeld == true)
+            {
+                if (_currentMouseState.RightButton == ButtonState.Released)
+                {
+                    _rightIsHeld = false;
+                    _rightClicked = true;
                 }
             }
 
 #endif
+        }
+
+        public bool LeftClicked()
+        {
+            return _leftClicked;
+        }
+        public bool RightClicked()
+        {
+            return _rightClicked;
         }
 
         public bool LeftHeld()
@@ -85,6 +110,27 @@ namespace Roboblob.XNA.WinRT.Input
                 (_currentMouseState.X != _lastMouseState.X || _currentMouseState.Y != _lastMouseState.Y))
             {
                 _leftIsHeld = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool RightHeld()
+        {
+            if (_currentMouseState.RightButton == ButtonState.Pressed
+                && _lastMouseState.RightButton == ButtonState.Pressed
+                && _rightIsHeld == true)
+            {
+                return true;
+            }
+            else if ((_currentMouseState.RightButton == ButtonState.Pressed
+                && _lastMouseState.RightButton == ButtonState.Pressed) &&
+                (_currentMouseState.X != _lastMouseState.X || _currentMouseState.Y != _lastMouseState.Y))
+            {
+                _rightIsHeld = true;
                 return true;
             }
             else
