@@ -15,7 +15,7 @@ namespace Transport
 
         // Mouse input
         MouseState lastMouseState;
-        MouseState currentMouseState;
+        //MouseState currentMouseState;
 
         public InputHandler(City city)
         {
