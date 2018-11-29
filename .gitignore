@@ -1,2 +1,3 @@
-/Transport/.vs/*
-/Transport/Transport/bin/*
+/Transport/.vs/
+/Transport/Transport/bin/
+/Transport/Transport/obj/
