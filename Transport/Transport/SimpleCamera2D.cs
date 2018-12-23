@@ -99,8 +99,8 @@ namespace Roboblob.XNA.WinRT.Camera
 
                 Matrix.CreateTranslation(ref resTranslationVector, out resTranslationMatrix);
 
-                transform = camRotationMatrix*
-                              camTranslationMatrix *
+                transform = camRotationMatrix *
+                             camTranslationMatrix *
                              camScaleMatrix *
                              resTranslationMatrix *
                              ResolutionIndependentRenderer.GetTransformationMatrix();

@@ -20,7 +20,7 @@ namespace Transport
         // Resolution and camera modification
         private ResolutionIndependentRenderer resolutionIndependence;
         private Camera2D camera;
-        private Vector2 screenMousePos;
+        private Vector2 worldMousePos;
         //private Texture2D bkg;
         //private Vector2 bkgPos;
         private float camRotationDiff = 0.02f;
@@ -28,6 +28,9 @@ namespace Transport
         private float camMoveDiff = 10f;
         private float camMouseMoveDiff = 0.5f;
         private SpriteBatch spriteBatch;
+        private const int TileSize = 100;
+        private const int screenWidth = 1000;
+        private const int screenHeight = 1000;
 
 
         Dictionary<Type, Texture2D> tileTextures = new Dictionary<Type, Texture2D>();
@@ -38,7 +41,7 @@ namespace Transport
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            city = new City(100, 100);
+            city = new City(10, 10);
 
             resolutionIndependence = new ResolutionIndependentRenderer(this);
             inputHelper = new InputHelper();
@@ -56,10 +59,15 @@ namespace Transport
             //inputHandler = new InputHandler(city);
             this.IsMouseVisible = true;
 
+            // Set the Resolution - Full Screen
+            /*            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+                        graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+                        graphics.IsFullScreen = true;
+            */
             // Set the Resolution
-            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
-            graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
-            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = screenWidth;
+            graphics.PreferredBackBufferHeight = screenHeight;
+            graphics.IsFullScreen = false;
             graphics.ApplyChanges();
 
         }
@@ -72,7 +80,7 @@ namespace Transport
         {
             // Setup camera / resolution
             camera = new Camera2D(resolutionIndependence);
-            InitializeResolutionIndependence(graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height);
+            InitializeResolutionIndependence(screenWidth, screenHeight);
             camera.Zoom = 1f;
             camera.Position = new Vector2(resolutionIndependence.VirtualWidth / 2, resolutionIndependence.VirtualHeight / 2);
 
@@ -81,7 +89,7 @@ namespace Transport
 
             // Load textures
             Texture2D baseTile = Content.Load<Texture2D>("sandtile");
-            Texture2D roadTile = Content.Load<Texture2D>("sandtile");
+            Texture2D roadTile = Content.Load<Texture2D>("lavatile");
             Texture2D residentialTile = Content.Load<Texture2D>("sandtile");
             Texture2D workTile = Content.Load<Texture2D>("sandtile");
             Texture2D playTile = Content.Load<Texture2D>("sandtile");
@@ -116,15 +124,15 @@ namespace Transport
         {
             inputHelper.Update();
 
-            screenMousePos = resolutionIndependence.ScaleMouseToScreenCoordinates(inputHelper.MousePosition);
+            worldMousePos = Vector2.Transform(inputHelper.MousePosition, Matrix.Invert(camera.GetViewTransformationMatrix()));
 
             if (inputHelper.ExitRequested)
                 Exit();
-
-
+ 
             // Left control modifier?
             if (inputHelper.IsCurPress(Keys.LeftControl))
             {
+                // Check arrow keys for camera rotation / zoom
                 if (inputHelper.IsCurPress(Keys.Left))
                 {
                     camera.Rotation += camRotationDiff;
@@ -143,6 +151,7 @@ namespace Transport
                 }
             } else
             {
+                // Check arrow keys for camera movement
                 if (inputHelper.IsCurPress(Keys.Left))
                 {
                     camera.Move(new Vector2(-camMoveDiff, 0));
@@ -160,7 +169,7 @@ namespace Transport
                     camera.Move(new Vector2(0, camMoveDiff));
                 }
 
-                // Check mouse input
+                // Mouse wheel
                 if (inputHelper.MouseScrollWheelVelocity > 0)
                 {
                     camera.Zoom += camZoomDiff;
@@ -169,14 +178,23 @@ namespace Transport
                 {
                     camera.Zoom -= camZoomDiff;
                 }
+                // Mouse left click scroll
                 else if (inputHelper.LeftHeld())
                 {
                     camera.Move(-inputHelper.MouseVelocity * camMouseMoveDiff);
                 }
-                else if (inputHelper.RightClicked())
+                // Right click
+                else if (inputHelper.IsOldPress(MouseButtons.RightButton))
                 {
+                    // Determine which tile was clicked
+                    int xTile = Convert.ToInt32(Math.Floor(worldMousePos.X / TileSize));
+                    int yTile = Convert.ToInt32(Math.Floor(worldMousePos.Y / TileSize));
+                    city.changeTile(xTile, yTile, null);
+                    //Tile tile = city.getTileAtPos(xTile, yTile);
+                    //System.Diagnostics.Debug.WriteLine("x: " + Convert.ToInt32(Math.Floor(worldMousePos.X / TileSize)));
+
                     //MessageBox.Show("Mouse", "Mouse Position", MessageBoxButtons.OK);
-                    
+
                 } else if (inputHelper.IsNewPress(Keys.R))
                 {
                     camera.Zoom = 1;
@@ -197,10 +215,8 @@ namespace Transport
             resolutionIndependence.BeginDraw();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, camera.GetViewTransformationMatrix());
             //spriteBatch.Draw(bkg, bkgPos, Color.White);
-
-            foreach (Tile tile in city.getTiles())
-            {
-                spriteBatch.Draw(tileTextures[tile.GetType()], new Rectangle(tile.X * 100, tile.Y * 100, 100, 100), Color.White);
+            foreach (Tile tile in city.getTiles()) {
+                spriteBatch.Draw(tileTextures[tile.GetType()], new Rectangle(tile.X * TileSize, tile.Y * TileSize, TileSize, TileSize), Color.White);
             }
 
             spriteBatch.End();

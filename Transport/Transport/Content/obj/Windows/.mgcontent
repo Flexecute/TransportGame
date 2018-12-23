@@ -4,9 +4,11 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
+    <File>E:/Work/TransportGame/Transport/Transport/Content/lava.png</File>
     <File>E:/Work/TransportGame/Transport/Transport/Content/sandtile.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>
 </SourceFileCollection>

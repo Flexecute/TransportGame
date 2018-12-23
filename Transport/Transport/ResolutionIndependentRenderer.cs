@@ -13,6 +13,12 @@ namespace Roboblob.XNA.WinRT.ResolutionIndependence
 
         public Color BackgroundColor = Color.Black;
 
+        public int VirtualHeight;
+        public int VirtualWidth;
+
+        public int ScreenWidth;
+        public int ScreenHeight;
+
         public ResolutionIndependentRenderer(Game game)
         {
             _game = game;
@@ -23,12 +29,6 @@ namespace Roboblob.XNA.WinRT.ResolutionIndependence
             ScreenHeight = 768;
         }
 
-        public int VirtualHeight;
-
-        public int VirtualWidth;
-
-        public int ScreenWidth;
-        public int ScreenHeight;
 
         public void Initialize()
         {

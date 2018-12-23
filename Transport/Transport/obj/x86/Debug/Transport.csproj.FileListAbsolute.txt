@@ -22,3 +22,5 @@ E:\Work\TransportGame\Transport\Transport\obj\x86\Debug\Transport.csproj.CopyCom
 E:\Work\TransportGame\Transport\Transport\obj\x86\Debug\Transport.exe
 E:\Work\TransportGame\Transport\Transport\obj\x86\Debug\Transport.pdb
 E:\Work\TransportGame\Transport\Transport\bin\Windows\x86\Debug\Content\sandtile.xnb
+E:\Work\TransportGame\Transport\Transport\bin\Windows\x86\Debug\Content\lava.xnb
+E:\Work\TransportGame\Transport\Transport\bin\Windows\x86\Debug\Content\lavatile.xnb
