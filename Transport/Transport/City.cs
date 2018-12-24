@@ -40,13 +40,18 @@ namespace Transport
         }
 
         public void changeTile(int x, int y, Tile newTileType) {
+            if (x < 0 || y < 0 || x >= xMax || y >= yMax) {
+                // Attempt to change a tile outside of the bounds
+                System.Diagnostics.Debug.WriteLine("Attempt to change tile at invalid x,y: " + x + "," + y);
+                return;
+            }
             Tile tile = new RoadTile(x, y);
-            // Destroy the old road tile, Replace with new one
+            // Destroy the old tile, replace with new one
             tiles[x, y] = tile;
         }
 
         public Tile getTileAtPos(int x, int y) {
-            if (x < 0 || y < 0 || x > xMax || y > yMax) {
+            if (x < 0 || y < 0 || x >= xMax || y >= yMax) {
                 // Attempt to find a tile outside of the bounds
                 return null;
             } else {
