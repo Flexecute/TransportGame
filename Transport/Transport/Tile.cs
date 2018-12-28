@@ -23,38 +23,4 @@ namespace Transport
         public int X { get => x; set => x = value; }
     }
 
-    class RoadTile : Tile
-    {
-        public RoadTile(int x, int y) : base(x, y)
-        {
-        }
-    }
-
-    class ResidentialTile : Tile
-    {
-        public ResidentialTile(int x, int y) : base(x, y)
-        {
-        }
-    }
-
-    class WorkTile : Tile
-    {
-        public WorkTile(int x, int y) : base(x, y)
-        {
-        }
-    }
-
-    class PlayTile : Tile
-    {
-        public PlayTile(int x, int y) : base(x, y)
-        {
-        }
-    }
-
-    class ShopTile : Tile
-    {
-        public ShopTile(int x, int y) : base(x, y)
-        {
-        }
-    }
 }

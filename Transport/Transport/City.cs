@@ -45,7 +45,12 @@ namespace Transport
                 System.Diagnostics.Debug.WriteLine("Attempt to change tile at invalid x,y: " + x + "," + y);
                 return;
             }
-            Tile tile = new RoadTile(x, y);
+            Tile tile;
+            if (getTileAtPos(x,y).GetType()== typeof(RoadTile)) {
+                tile = new Tile(x, y);
+            } else {
+                tile = new RoadTile(x, y);
+            }
             // Destroy the old tile, replace with new one
             tiles[x, y] = tile;
         }
